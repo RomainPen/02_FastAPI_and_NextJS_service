@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8500:8500"
+    container_name: todo-backend
+    restart: unless-stopped
+    networks:
+      - todo-network
+
+  frontend:
+    build:
+      context: ./frontend/todo-app
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:5000:5000"
+    container_name: todo-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8500/api
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
